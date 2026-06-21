@@ -5,7 +5,7 @@ export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
-            refresh: true,
+            refresh: ['resources/views/**'],
         }),
     ],
     server: {
@@ -13,7 +13,13 @@ export default defineConfig({
         port: 5173,
         allowedHosts: true,
         watch: {
-            ignored: ['**/vendor/**', '**/storage/framework/views/**'],
+            ignored: [
+                '**/vendor/**',
+                '**/node_modules/**',
+                '**/storage/**',
+                '**/.cache/**',
+                '**/public/build/**',
+            ],
         },
     },
 });
