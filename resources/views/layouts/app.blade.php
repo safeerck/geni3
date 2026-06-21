@@ -83,7 +83,12 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-medium text-white truncate">{{ Auth::user()->name }}</p>
-                        <p class="text-xs text-slate-500 truncate">{{ Auth::user()->email }}</p>
+                        <span class="text-xs font-medium px-1.5 py-0.5 rounded
+                            @if(Auth::user()->role === 'admin') bg-indigo-500/30 text-indigo-200
+                            @elseif(Auth::user()->role === 'editor') bg-violet-500/30 text-violet-200
+                            @else bg-slate-600 text-slate-300 @endif">
+                            {{ Auth::user()->role_label }}
+                        </span>
                     </div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
