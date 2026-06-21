@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
@@ -33,10 +34,10 @@ class UserController extends Controller
             $query->where('role', $request->role);
         }
 
-        $users   = $query->latest()->paginate(10)->withQueryString();
-        $total   = User::count();
+        $users    = $query->latest()->paginate(10)->withQueryString();
+        $total    = User::count();
         $verified = User::whereNotNull('email_verified_at')->count();
-        $byRole  = User::selectRaw('role, count(*) as count')->groupBy('role')->pluck('count', 'role');
+        $byRole   = User::selectRaw('role, count(*) as count')->groupBy('role')->pluck('count', 'role');
 
         return view('admin.users.index', compact('users', 'total', 'verified', 'byRole'));
     }
@@ -55,13 +56,22 @@ class UserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        User::create([
+        $user = User::create([
             'name'              => $request->name,
             'email'             => $request->email,
             'role'              => $request->role,
             'password'          => Hash::make($request->password),
             'email_verified_at' => $request->boolean('verified') ? now() : null,
         ]);
+
+        ActivityLogger::log(
+            action:      'user.created',
+            description: auth()->user()->name . " created user {$user->name} with role {$user->role}",
+            targetType:  'user',
+            targetId:    $user->id,
+            targetName:  $user->name,
+            properties:  ['role' => $user->role, 'email' => $user->email],
+        );
 
         return redirect()->route('admin.users.index')
                          ->with('success', 'User created successfully.');
@@ -81,10 +91,16 @@ class UserController extends Controller
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // Prevent removing admin role from yourself
         if ($user->id === auth()->id() && $request->role !== 'admin') {
             return back()->with('error', 'You cannot remove your own admin role.');
         }
+
+        $oldRole = $user->role;
+        $changes = [];
+
+        if ($user->name !== $request->name)  $changes['name']  = ['from' => $user->name,  'to' => $request->name];
+        if ($user->email !== $request->email) $changes['email'] = ['from' => $user->email, 'to' => $request->email];
+        if ($user->role !== $request->role)   $changes['role']  = ['from' => $oldRole,     'to' => $request->role];
 
         $user->update([
             'name'              => $request->name,
@@ -97,7 +113,24 @@ class UserController extends Controller
 
         if ($request->filled('password')) {
             $user->update(['password' => Hash::make($request->password)]);
+            $changes['password'] = ['from' => '(hidden)', 'to' => '(changed)'];
         }
+
+        // Role change gets its own action type
+        $action = isset($changes['role']) ? 'user.role_changed' : 'user.updated';
+
+        $desc = isset($changes['role'])
+            ? auth()->user()->name . " changed {$user->name}'s role from {$oldRole} to {$request->role}"
+            : auth()->user()->name . " updated {$user->name}";
+
+        ActivityLogger::log(
+            action:      $action,
+            description: $desc,
+            targetType:  'user',
+            targetId:    $user->id,
+            targetName:  $user->name,
+            properties:  $changes ?: null,
+        );
 
         return redirect()->route('admin.users.index')
                          ->with('success', 'User updated successfully.');
@@ -109,7 +142,16 @@ class UserController extends Controller
             return back()->with('error', 'You cannot delete your own account.');
         }
 
+        $name = $user->name;
         $user->delete();
+
+        ActivityLogger::log(
+            action:      'user.deleted',
+            description: auth()->user()->name . " deleted user {$name}",
+            targetType:  'user',
+            targetId:    null,
+            targetName:  $name,
+        );
 
         return redirect()->route('admin.users.index')
                          ->with('success', 'User deleted successfully.');
