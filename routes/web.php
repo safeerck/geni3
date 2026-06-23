@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Customer\AuthController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,14 +15,42 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// ── Customer Auth (OTP flow) ─────────────────────────────────────
+Route::prefix('customer')->name('customer.')->group(function () {
+
+    // Guest-only (redirect to dashboard if already logged in)
+    Route::middleware('customer.guest')->group(function () {
+        Route::get('/',         [AuthController::class, 'showStart'])      ->name('auth.start');
+        Route::post('/',        [AuthController::class, 'processStart'])   ->name('auth.start');
+        Route::get('/register', [AuthController::class, 'showRegister'])   ->name('auth.register');
+        Route::post('/register',[AuthController::class, 'processRegister'])->name('auth.register');
+        Route::get('/verify',   [AuthController::class, 'showVerify'])     ->name('auth.verify');
+        Route::post('/verify',  [AuthController::class, 'processVerify'])  ->name('auth.verify');
+        Route::post('/resend',  [AuthController::class, 'resendOtp'])      ->name('auth.resend');
+    });
+
+    // Protected customer routes
+    Route::middleware('customer.auth')->group(function () {
+        Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
+    });
+
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+// ── Admin Panel ──────────────────────────────────────────────────
 Route::middleware(['auth', 'role:admin,editor'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('users', UserController::class)->except(['show']);
     Route::get('activity', [ActivityLogController::class, 'index'])->name('activity.index');
+
+    // Settings — admin only (controller enforces this internally)
+    Route::get('settings',  [SettingController::class, 'index']) ->name('settings.index');
+    Route::put('settings',  [SettingController::class, 'update'])->name('settings.update');
 });
 
+// ── User Profile ─────────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile',    [ProfileController::class, 'edit'])   ->name('profile.edit');
+    Route::patch('/profile',  [ProfileController::class, 'update']) ->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
