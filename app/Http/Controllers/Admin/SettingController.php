@@ -86,7 +86,518 @@ class SettingController extends Controller
         return redirect()->route('admin.settings.index');
     }
 
+    /**
+     * Apply mail configuration from settings to Laravel's config
+     * This makes the settings take effect immediately
+     */
     private function applyMailConfig(): void
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
+            if ($val !== null) {
+                config([$configKey => $val]);
+            }
+        }
+
+        config(['mail.default' => 'smtp']);
+    }
+}
+
+    /**
+     * Apply mail configuration from settings to Laravel's config
+     * This makes the settings take effect immediately
+     */
+    private function applyMailConfig(): void
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
+            if ($val !== null) {
+                config([$configKey => $val]);
+            }
+        }
+        config(['mail.default' => 'smtp']);
+    }
+
+    /**
+     * Apply mail configuration from settings to Laravel's config
+     * This makes the settings take effect immediately
+     */
+    private function applyMailConfig(): void
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
+            if ($val !== null) {
+                config([$configKey => $val]);
+            }
+        }
+        config(['mail.default' => 'smtp']);
+    }
+    }
+     * This makes the settings take effect immediately
+     */
+    private function applyMailConfig(): void
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
+            if ($val !== null) {
+                config([$configKey => $val]);
+            }
+        }
+        config(['mail.default' => 'smtp']);
+    }
+     * This makes the settings take effect immediately
+     */
+    private function applyMailConfig(): void
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
+            if ($val !== null) {
+                config([$configKey => $val]);
+            }
+        }
+    }
+     * This makes the settings take effect immediately
+     */
+    private function applyMailConfig(): void
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
+            if ($val !== null) {
+                config([$configKey => $val]);
+            }
+        }
+    }
+
+    private function applyMailConfig(): void
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
+            if ($val !== null) {
+                config([$configKey => $val]);
+            }
+        }
+        config(['mail.default' => 'smtp']);
+    }
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
+            if ($val !== null) {
+                config([$configKey => $val]);
+            }
+        }
+    }
+
+    private function applyMailConfig(): void
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
+            if ($val !== null) {
+                config([$configKey => $val]);
+            }
+        }
+        config(['mail.default' => 'smtp']);
+    }
+    private function applyMailConfig(): void
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
+            if ($val !== null) {
+                config([$configKey => $val]);
+            }
+        }
+        config(['mail.default' => 'smtp']);
+    }
+     */
+    private function applyMailConfig(): void
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
+            if ($val !== null) {
+                config([$configKey => $val]);
+            }
+        }
+        config(['mail.default' => 'smtp']);
+        config(['mail.default' => 'smtp']);
+    }
+    private function applyMailConfig(): void
+    {
+    /**
+     * Apply mail configuration from settings to Laravel's config
+     * This makes the settings take effect immediately
+     */
+    private function applyMailConfig(): void
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
+            if ($val !== null) {
+                config([$configKey => $val]);
+            }
+        }
+        config(['mail.default' => 'smtp']);
+    }
+     * This makes the settings take effect immediately
+     */
+    private function applyMailConfig(): void
+        config(['mail.default' => 'smtp']);
+    }
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+    }
+                config([$configKey => $val]);
+            }
+        }
+        config(['mail.default' => 'smtp']);
+        config(['mail.default' => 'smtp']);
+    }
+
+    /**
+     * Apply mail configuration from settings to Laravel's config
+     * This makes the settings take effect immediately
+     */
+    private function applyMailConfig(): void
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
+            if ($val !== null) {
+                config([$configKey => $val]);
+            }
+        }
+        config(['mail.default' => 'smtp']);
+    }
+     */
+    private function applyMailConfig(): void
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
+            if ($val !== null) {
+                config([$configKey => $val]);
+            }
+        }
+        config(['mail.default' => 'smtp']);
+    }
+     */
+    private function applyMailConfig(): void
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+        config(['mail.default' => 'smtp']);
+    }
+
+    /**
+     * Apply mail configuration from settings to Laravel's config
+     * This makes the settings take effect immediately
+     */
+    private function applyMailConfig(): void
+    {
+        $settings = Setting::getSmtpSettings();
+
+        config([
+            'mail.mailers.smtp.host'       => $settings['host'],
+            'mail.mailers.smtp.port'       => $settings['port'],
+            'mail.mailers.smtp.username'   => $settings['username'],
+            'mail.mailers.smtp.password'   => $settings['password'],
+            'mail.mailers.smtp.encryption' => $settings['encryption'],
+            'mail.from.address'            => $settings['from']['address'],
+            'mail.from.name'               => $settings['from']['name'],
+            'mail.default'                 => 'smtp',
+        ]);
+    }
+                config([$configKey => $val]);
+            }
+        }
+        config(['mail.default' => 'smtp']);
+    }
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        });
+    }
+
+    /**
+     * Apply mail configuration from settings to Laravel's config
+     * This makes the settings take effect immediately
+     */
+    private function applyMailConfig(): void
+    {
+        $settings = Setting::getSmtpSettings();
+
+        config([
+            'mail.mailers.smtp.host'       => $settings['host'],
+            'mail.mailers.smtp.port'       => $settings['port'],
+            'mail.mailers.smtp.username'   => $settings['username'],
+            'mail.mailers.smtp.password'   => $settings['password'],
+            'mail.mailers.smtp.encryption' => $settings['encryption'],
+            'mail.from.address'            => $settings['from']['address'],
+            'mail.from.name'               => $settings['from']['name'],
+            'mail.default'                 => 'smtp',
+        ]);
+    }
+     * Apply mail configuration from settings to Laravel's config
+     * This makes the settings take effect immediately
+     */
+    private function applyMailConfig(): void
+    {
+        $settings = Setting::getSmtpSettings();
+
+        config([
+            'mail.mailers.smtp.host'       => $settings['host'],
+            'mail.mailers.smtp.port'       => $settings['port'],
+            'mail.mailers.smtp.username'   => $settings['username'],
+            'mail.mailers.smtp.password'   => $settings['password'],
+            'mail.mailers.smtp.encryption' => $settings['encryption'],
+            'mail.from.address'            => $settings['from']['address'],
+            'mail.from.name'               => $settings['from']['name'],
+            'mail.default'                 => 'smtp',
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
+            if ($val !== null) {
+                config([$configKey => $val]);
+            }
+        }
+        config(['mail.default' => 'smtp']);
+    }
+    }
+
+    /**
+     * Apply mail configuration from settings to Laravel's config
+     * This makes the settings take effect immediately
+     */
+    private function applyMailConfig(): void
+    {
+        $settings = Setting::getSmtpSettings();
+
+        config([
+            'mail.mailers.smtp.host'       => $settings['host'],
+            'mail.mailers.smtp.port'       => $settings['port'],
+            'mail.mailers.smtp.username'   => $settings['username'],
+            'mail.mailers.smtp.password'   => $settings['password'],
+            'mail.mailers.smtp.encryption' => $settings['encryption'],
+            'mail.from.address'            => $settings['from']['address'],
+            'mail.from.name'               => $settings['from']['name'],
+            'mail.default'                 => 'smtp',
+        ]);
+        config(['mail.default' => 'smtp']);
+    }
+                config([$configKey => $val]);
+            }
+        }
+        config(['mail.default' => 'smtp']);
+    }
+     */
+    private function applyMailConfig(): void
+    {
+        $settings = Setting::getSmtpSettings();
+
+        config([
+            'mail.mailers.smtp.host'       => $settings['host'],
+            'mail.mailers.smtp.port'       => $settings['port'],
+            'mail.mailers.smtp.username'   => $settings['username'],
+            'mail.mailers.smtp.password'   => $settings['password'],
+            'mail.mailers.smtp.encryption' => $settings['encryption'],
+    }
+
+    private function applyMailConfig(): void
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
+            if ($val !== null) {
+                config([$configKey => $val]);
+            }
+        }
+        config(['mail.default' => 'smtp']);
+    }
+            'mail.default'                 => 'smtp',
+        ]);
+    }
+     * Apply mail configuration from settings to Laravel's config
+     * This makes the settings take effect immediately
+     */
+     * This makes the settings take effect immediately
+     */
+    private function applyMailConfig(): void
+    {
+        $settings = Setting::getSmtpSettings();
+
+        config([
+            'mail.mailers.smtp.host'       => $settings['host'],
+            'mail.mailers.smtp.port'       => $settings['port'],
+            'mail.mailers.smtp.username'   => $settings['username'],
+            'mail.mailers.smtp.password'   => $settings['password'],
+            'mail.mailers.smtp.encryption' => $settings['encryption'],
+        });
+    }
+            'mail.default'                 => 'smtp',
+        ]);
+        ]);
+    }
+
+    private function applyMailConfig(): void
+    {
+        $map = [
+            'mail_host'         => 'mail.mailers.smtp.host',
+            'mail_port'         => 'mail.mailers.smtp.port',
+            'mail_username'     => 'mail.mailers.smtp.username',
+            'mail_password'     => 'mail.mailers.smtp.password',
+            'mail_encryption'   => 'mail.mailers.smtp.encryption',
+            'mail_from_address' => 'mail.from.address',
+            'mail_from_name'    => 'mail.from.name',
+        ];
+        foreach ($map as $settingKey => $configKey) {
+            $val = Setting::get($settingKey);
     {
         $map = [
             'mail_host'         => 'mail.mailers.smtp.host',

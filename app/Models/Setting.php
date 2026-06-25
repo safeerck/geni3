@@ -26,5 +26,25 @@ class Setting extends Model
     public static function isPhoneOtpEnabled(): bool
     {
         return static::get('phone_otp_enabled', '0') === '1';
+    public static function isPhoneOtpEnabled(): bool
+    {
+        return static::get('phone_otp_enabled', '0') === '1';
     }
-}
+
+    /**
+     * Get all SMTP-related settings as an associative array
+     */
+    public static function getSmtpSettings(): array
+    {
+        return [
+            'host'       => static::get('mail_host', '127.0.0.1'),
+            'port'       => static::get('mail_port', '587'),
+            'username'   => static::get('mail_username', ''),
+            'password'   => static::get('mail_password', ''),
+            'encryption' => static::get('mail_encryption', 'tls'),
+            'from'       => [
+                'address' => static::get('mail_from_address', 'hello@example.com'),
+                'name'    => static::get('mail_from_name', config('app.name', 'Geni')),
+            ],
+        ];
+    }
