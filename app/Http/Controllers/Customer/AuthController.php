@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\Setting;
 use App\Services\CustomerAuthService;
 use App\Services\OtpService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -31,34 +31,47 @@ class AuthController extends Controller
         ]);
 
         $identifier = trim($request->identifier);
-        $customer   = $this->authService->findByIdentifier($identifier);
+        $type       = $this->authService->identifierType($identifier);
 
-        // Store in session for next steps
+        // Phone entered but SMS disabled and no email fallback possible for new user
+        // We still allow it — they'll be prompted for email on register if needed
+
         session([
             'customer_auth.identifier'      => $identifier,
-            'customer_auth.identifier_type' => $this->authService->identifierType($identifier),
+            'customer_auth.identifier_type' => $type,
         ]);
 
-        if ($customer && $customer->isRegistrationComplete()) {
-            // Existing customer → send OTP for login
+        $customer = $this->authService->findByIdentifier($identifier);
+
+        if ($customer && $customer->is_verified) {
+            // Existing verified customer → send OTP to log in
             $dispatch = $this->otpService->send($customer);
             session(['customer_auth.customer_id' => $customer->id]);
 
             return redirect()->route('customer.auth.verify')
-                             ->with('otp_sent_via', $dispatch['sent_via'])
-                             ->with('otp_channel', $dispatch['channel'])
                              ->with('info', $this->sentMessage($dispatch));
         }
 
-        // New customer (or incomplete profile) → registration
-        if ($customer) {
-            session(['customer_auth.customer_id' => $customer->id]);
+        // New customer or unverified → create stub and send OTP
+        if (! $customer) {
+            // Phone-only signup when SMS is disabled: require email instead
+            if ($type === 'phone' && ! Setting::isPhoneOtpEnabled()) {
+                return redirect()->route('customer.auth.register');
+            }
+
+            $customer = $this->authService->createStub($identifier);
         }
 
-        return redirect()->route('customer.auth.register');
+        session(['customer_auth.customer_id' => $customer->id]);
+
+        $dispatch = $this->otpService->send($customer);
+
+        return redirect()->route('customer.auth.verify')
+                         ->with('info', $this->sentMessage($dispatch));
     }
 
-    // ── Step 2a: Registration (new customers only) ───────────────
+    // ── Step 2: Register (only when phone entered + SMS disabled) ─
+    // Collects an email so OTP can be sent via email instead
     public function showRegister()
     {
         if (! session('customer_auth.identifier')) {
@@ -66,8 +79,8 @@ class AuthController extends Controller
         }
 
         return view('customer.auth.register', [
-            'identifier'      => session('customer_auth.identifier'),
-            'identifierType'  => session('customer_auth.identifier_type'),
+            'identifier'     => session('customer_auth.identifier'),
+            'identifierType' => session('customer_auth.identifier_type'),
         ]);
     }
 
@@ -77,50 +90,31 @@ class AuthController extends Controller
             return redirect()->route('customer.auth.start');
         }
 
-        $identifierType = session('customer_auth.identifier_type');
-
-        $rules = [
-            'first_name' => ['required', 'string', 'max:100'],
-            'last_name'  => ['required', 'string', 'max:100'],
-        ];
-
-        // Only require the field not already captured
-        if ($identifierType === 'phone') {
-            $rules['email'] = ['required', 'email', 'max:255', 'unique:customers,email'];
-        } else {
-            $rules['phone_number'] = ['nullable', 'string', 'max:30'];
-        }
-
-        $validated = $request->validate($rules, [
-            'first_name.required' => 'First name is required.',
-            'last_name.required'  => 'Last name is required.',
-            'email.required'      => 'An email address is required for OTP delivery.',
-            'email.unique'        => 'This email is already registered.',
+        $request->validate([
+            'email' => ['required', 'email', 'max:255', 'unique:customers,email'],
+        ], [
+            'email.required' => 'An email address is required to receive your verification code.',
+            'email.unique'   => 'This email is already registered.',
         ]);
 
-        // Get or create the customer stub
-        $customerId = session('customer_auth.customer_id');
-        $customer   = $customerId
-            ? Customer::find($customerId)
-            : $this->authService->createStub(session('customer_auth.identifier'));
+        $identifier = session('customer_auth.identifier');
 
-        $customer = $this->authService->completeProfile($customer, array_merge(
-            $validated,
-            [$identifierType === 'email' ? 'email' : 'phone_number' => session('customer_auth.identifier')],
-        ));
+        // Create stub with both phone and email
+        $customer = Customer::create([
+            'phone_number' => $identifier,
+            'email'        => $request->email,
+            'is_verified'  => false,
+        ]);
 
         session(['customer_auth.customer_id' => $customer->id]);
 
-        // Send OTP
         $dispatch = $this->otpService->send($customer);
 
         return redirect()->route('customer.auth.verify')
-                         ->with('otp_sent_via', $dispatch['sent_via'])
-                         ->with('otp_channel', $dispatch['channel'])
                          ->with('info', $this->sentMessage($dispatch));
     }
 
-    // ── Step 2b / 3: OTP Verification ───────────────────────────
+    // ── Step 3: OTP Verification ─────────────────────────────────
     public function showVerify()
     {
         if (! session('customer_auth.customer_id')) {
@@ -128,6 +122,11 @@ class AuthController extends Controller
         }
 
         $customer = Customer::find(session('customer_auth.customer_id'));
+
+        if (! $customer) {
+            return redirect()->route('customer.auth.start');
+        }
+
         return view('customer.auth.verify', compact('customer'));
     }
 
@@ -151,15 +150,13 @@ class AuthController extends Controller
             return back()->withErrors(['otp' => 'Invalid or expired code. Please try again.']);
         }
 
-        // Mark verified & log in
         $this->authService->markVerified($customer, $this->otpService);
         $this->authService->login($customer);
 
-        // Clear auth session data
         session()->forget(['customer_auth.identifier', 'customer_auth.identifier_type', 'customer_auth.customer_id']);
 
         return redirect()->route('customer.dashboard')
-                         ->with('success', "Welcome, {$customer->first_name}!");
+                         ->with('success', 'Welcome! You are now signed in.');
     }
 
     // ── Resend OTP ───────────────────────────────────────────────
@@ -192,13 +189,12 @@ class AuthController extends Controller
                          ->with('success', 'You have been signed out.');
     }
 
-    // ── Helpers ──────────────────────────────────────────────────
     private function sentMessage(array $dispatch): string
     {
         return match ($dispatch['sent_via']) {
             'email' => "A 6-digit code was sent to {$dispatch['channel']}.",
             'phone' => "A 6-digit code was sent via SMS to {$dispatch['channel']}.",
-            default => 'Code generated — check application logs (no delivery channel available).',
+            default => 'Code generated — check application logs (no delivery channel configured).',
         };
     }
 }

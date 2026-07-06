@@ -26,14 +26,8 @@ class Setting extends Model
     public static function isPhoneOtpEnabled(): bool
     {
         return static::get('phone_otp_enabled', '0') === '1';
-    public static function isPhoneOtpEnabled(): bool
-    {
-        return static::get('phone_otp_enabled', '0') === '1';
     }
 
-    /**
-     * Get all SMTP-related settings as an associative array
-     */
     public static function getSmtpSettings(): array
     {
         return [
@@ -48,3 +42,4 @@ class Setting extends Model
             ],
         ];
     }
+}
